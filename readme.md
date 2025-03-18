@@ -34,7 +34,7 @@ The project is organized as follows:
 1. **Clone the repository (if using Git):**
 
     ```bash
-    git clone <repository_url>
+    git clone [<repository_url>](https://github.com/AbhinnV04/Customer_Churn_Telco.git)
     cd <project_directory>
     ```
 
