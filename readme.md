@@ -16,7 +16,6 @@ The project is organized as follows:
   - **`utils/`**: Contains utility functions, including:
     - `model_builder.py`: Script for rebuilding and training the model.
     - `preprocessing.py`: Functions for data preprocessing (if needed outside the pipeline).
-- **`tests/`**: Contains tests for the API and other components.
 - **`requirements.txt`**: Lists the Python dependencies.
 - **`README.md`**: Provides project documentation.
 - **`.gitignore`**: Specifies files to be ignored by Git.
