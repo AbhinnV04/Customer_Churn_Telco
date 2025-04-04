@@ -74,8 +74,7 @@ python src/utils/model_builder.py
 ### Running the FastAPI API
 To start the FastAPI server:
 ```
-cd src/api
-uvicorn main:app --reload
+fastapi dev main.py
 ```
 
 ### Project Components
