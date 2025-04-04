@@ -9,8 +9,7 @@ model = load_model()
 @app.post("/predict")
 def predict_churn(data: dict):
     df = pd.DataFrame([data])
-    prediction = model.predict(df)[0]
-    
+    prediction = model.predict(df)[0] 
     return {"churn_prediction" : prediction}
 
 @app.get("/test")
