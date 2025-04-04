@@ -34,7 +34,27 @@ def test_model():
 
     print("Expected Class: 1.0")
     print("Predicted Class:", prediction[0])
+<<<<<<< HEAD
 
+=======
+    
+    
+def test_model_json():
+    """Tests the model with a sample input."""
+    model = load_model()  
+    
+    sample_data = np.array([[0, 28, 104.8, 3046.05, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 
+                             1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 
+                             0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 
+                             0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0]])  # Expected class: 1
+
+    prediction = model.predict(sample_data)
+
+    return {
+        "Expected Class": 1.0, 
+        "Predicted Class":prediction[0]
+        }
+>>>>>>> dev
 
 if __name__ == "__main__":
     test_model()
