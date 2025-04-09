@@ -1,6 +1,9 @@
 # Customer Churn Prediction Project
 
-![](https://trianglerice.wordpress.com/wp-content/uploads/2015/01/tumblr_nhk406ny5e1ti2my5o1_5001.gif)
+<p align="center">
+  <img src="https://trianglerice.wordpress.com/wp-content/uploads/2015/01/tumblr_nhk406ny5e1ti2my5o1_5001.gif" alt="Centered GIF" />
+</p>
+
 
 This project focuses on predicting customer churn using machine learning techniques. It includes data exploration, model building, and a FastAPI API for serving predictions.
 
@@ -61,15 +64,6 @@ The project is organized as follows:
 
 ## Usage
 
-### Rebuilding and Training the Model
-
-To rebuild and train the model, run the `model_builder.py` script:
-
-```bash
-python src/utils/model_builder.py
-```
-- This will train the model and save the pipeline to models/model.joblib.
-
 ### Running the FastAPI API
 To start the FastAPI server:
 ```
@@ -89,12 +83,5 @@ The project assumes data is stored in CSV files, but it can be adapted to other 
 Feature importances are extracted from the Decision Tree model to understand the key drivers of customer churn.
 #### 5. Calibration
 Model calibration is used to improve the reliability of predicted probabilities.
-
----
-
-<div style="text-align: center;">
-    <img src="https://media2.giphy.com/media/a6pzK009rlCak/200.gif?cid=6c09b952zrtwcjwop83jxm86d7cin1pwqbwivmg6jej9dngs&ep=v1_gifs_search&rid=200.gif&ct=g" alt="Alternative text">
-    <p>*Arigato for Reading this far*</p>
-</div>
 
 ---
