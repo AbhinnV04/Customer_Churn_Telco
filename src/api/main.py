@@ -11,7 +11,7 @@ class CustomerData(BaseModel):
     partner: int
     dependents: int
     tenure: int 
-    phoneService: str 
+    phoneService: int 
     multipleLines: str 
     internetService: str 
     onlineSecurity: str 
