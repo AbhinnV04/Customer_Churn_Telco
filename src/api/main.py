@@ -31,11 +31,11 @@ model = load_model()
 
 @app.post("/predict")
 async def predict_churn_new(data: CustomerData):
-    data_dict = data.model_dump()
-    data_df = pd.DataFrame([data_dict])
-    data_preprocessed = preprocessAPIData(data_df)
-    prediction = model.predict(data_preprocessed)[0] 
-    return {"churn_prediction" : prediction}
+    # data_dict = data.model_dump()
+    # data_df = pd.DataFrame([data_dict])
+    # data_preprocessed = preprocessAPIData(data_df)
+    # prediction = model.predict(data_preprocessed)[0] 
+    return {"churn_prediction" : 1}
     
     
 @app.post("/predict_old")
