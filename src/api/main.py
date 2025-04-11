@@ -1,5 +1,4 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import pandas as pd
@@ -8,82 +7,84 @@ import logging
 
 # Internal utils
 from utils.model_loader import load_model, test_model_json
-from utils.preprocessing import preprocessAPIData
+from utils.preprocessing import preprocess_API_data, get_trained_encoder_and_columns, rename_keys_for_model, get_model_columns
+from schemas.customer import CustomerData
 
+# Load environment
 load_dotenv()
 
 # Logger
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-# Module Resolution
+# Module resolution (optional, if using relative imports elsewhere)
 os.environ["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-class CustomerData(BaseModel):
-    gender: str
-    seniorCitizen: int
-    partner: int
-    dependents: int
-    tenure: int 
-    phoneService: int 
-    multipleLines: str 
-    internetService: str 
-    onlineSecurity: str 
-    onlineBackup: str 
-    deviceProtection: str 
-    techSupport: str 
-    streamingTV: str 
-    streamingMovies: str 
-    contract: str 
-    paperlessBilling: int 
-    paymentMethod: str 
-    monthlyCharges: float
-    totalCharges: float    
-
-# Initialize model and App
+# FastAPI App
 app = FastAPI()
-model = load_model()
 
+# CORS middleware
 origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
-
-# Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins= origins,  # your frontend origin
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Endpoints
+# Expected model input columns
+MODEL_COLUMNS = get_model_columns()
 
+# Load model
+model = load_model()
+
+# Root Endpoint
 @app.get("/")
 async def root():
-    logger.info("YAY!! API is running")
-    
-    return {"message": "Welcome to the API!"}
+    logger.info("Root endpoint hit.")
+    return {"message": "Welcome to the Churn Prediction API!"}
 
+
+# Prediction Endpoint
 @app.post("/predict")
 async def predict_churn_new(data: CustomerData):
-    # data_dict = data.model_dump()
-    # data_df = pd.DataFrame([data_dict])
-    # data_preprocessed = preprocessAPIData(data_df)
-    # prediction = model.predict(data_preprocessed)[0] 
-    return {"churn_prediction" : 1}
-    
+    try:
+        data_dict = data.model_dump(by_alias=True)
+        renamed = rename_keys_for_model(data_dict)
+
+        input_df = pd.DataFrame([renamed])
+        encoder, cat_cols, _ = get_trained_encoder_and_columns(input_df)
+
+        data_preprocessed = preprocess_API_data(renamed, encoder, cat_cols, MODEL_COLUMNS)
+
+        if data_preprocessed.shape[1] != len(MODEL_COLUMNS):
+            raise ValueError(f"Input has {data_preprocessed.shape[1]} features, but model expects {len(MODEL_COLUMNS)}.")
+
+        prediction = model.predict(data_preprocessed)[0]
+        logger.info("✅ Prediction complete.")
+
+        return {"churn_prediction": int(prediction)}
+
+    except Exception as e:
+        logger.error(f"Prediction error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
+
+# Legacy Predict Endpoint
 @app.post("/predict_old")
 def predict_churn_old(data: dict):
-    logger.info("DEPRECATED")
-    
-    df = pd.DataFrame([data])
-    prediction = model.predict(df)[0] 
-    return {"churn_prediction" : prediction}
+    logger.warning("Deprecated endpoint hit.")
+    try:
+        df = pd.DataFrame([data])
+        prediction = model.predict(df)[0]
+        return {"churn_prediction": int(prediction)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
 
+
+# Test Endpoint
 @app.get("/test")
 def test_model_old():
-    logger.info("Testing model...")
-    
-    result = test_model_json()
-    return result
+    logger.info("Test model endpoint hit.")
+    return test_model_json()
