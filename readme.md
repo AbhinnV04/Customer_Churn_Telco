@@ -100,4 +100,8 @@ You can interact with the app by entering customer details via the frontend, whi
 - **Backend API (Render):**  
   🔗 [https://customer-churn-telco.onrender.com/](https://customer-churn-telco.onrender.com/)
 
+- **Backend API Docs:**  
+  🔗 [https://customer-churn-telco.onrender.com/docs](https://customer-churn-telco.onrender.com/docs)
+
+
 ---
