@@ -16,10 +16,14 @@ The project is organized as follows:
 - **`notebooks/`**: Includes Jupyter notebooks used for data exploration, model development, and experimentation.
 - **`src/`**: Contains the source code:
   - **`api/`**: Implements the FastAPI application for serving predictions.
+    - `main.py`: FastAPI app.
+  - **`schemas/`**: Pydantic schema model for POST requests.
+    - `customer.py`: Schema for customer.
   - **`utils/`**: Contains utility functions, including:
-    - `model_builder.py`: Script for rebuilding and training the model.
-    - `preprocessing.py`: Functions for data preprocessing (if needed outside the pipeline).
+    - `model_loader.py`: Script for loading the latest model.
+    - `preprocessing.py`: Functions for data preprocessing from the POST request for the model.
 - **`requirements.txt`**: Lists the Python dependencies.
+- **`example.env`**: Format for the actual .env file.
 - **`README.md`**: Provides project documentation.
 - **`.gitignore`**: Specifies files to be ignored by Git.
 
@@ -83,5 +87,17 @@ The project assumes data is stored in CSV files, but it can be adapted to other 
 Feature importances are extracted from the Decision Tree model to understand the key drivers of customer churn.
 #### 5. Calibration
 Model calibration is used to improve the reliability of predicted probabilities.
+
+---
+## 🌐 Deployment
+
+The application is deployed and live!
+You can interact with the app by entering customer details via the frontend, which then communicates with the deployed FastAPI backend for predictions.
+
+- **Frontend (Vercel):**  
+  🔗 [https://telco-churn.vercel.app/](https://telco-churn.vercel.app/)
+
+- **Backend API (Render):**  
+  🔗 [https://customer-churn-telco.onrender.com/](https://customer-churn-telco.onrender.com/)
 
 ---
