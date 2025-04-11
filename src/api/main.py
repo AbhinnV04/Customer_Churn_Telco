@@ -24,7 +24,18 @@ os.environ["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__
 app = FastAPI()
 
 # CORS middleware
-origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+# origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
+raw_origins = os.getenv("ALLOWED_ORIGINS", "")
+origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
