@@ -34,9 +34,6 @@ def test_model():
 
     print("Expected Class: 1.0")
     print("Predicted Class:", prediction[0])
-<<<<<<< HEAD
-
-=======
     
     
 def test_model_json():
@@ -54,7 +51,6 @@ def test_model_json():
         "Expected Class": 1.0, 
         "Predicted Class":prediction[0]
         }
->>>>>>> dev
 
 if __name__ == "__main__":
     test_model()
