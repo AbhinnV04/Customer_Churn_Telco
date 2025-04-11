@@ -10,11 +10,16 @@ import logging
 from utils.model_loader import load_model, test_model_json
 from utils.preprocessing import preprocessAPIData
 
-
 load_dotenv()
 
-os.environ["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+# Logger
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
+# Module Resolution
+os.environ["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 class CustomerData(BaseModel):
     gender: str
@@ -56,7 +61,9 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "YAY!! API is running"}
+    logger.info("YAY!! API is running")
+    
+    return {"message": "Welcome to the API!"}
 
 @app.post("/predict")
 async def predict_churn_new(data: CustomerData):
@@ -68,11 +75,15 @@ async def predict_churn_new(data: CustomerData):
     
 @app.post("/predict_old")
 def predict_churn_old(data: dict):
-    print("DEPRECATED")
+    logger.info("DEPRECATED")
+    
     df = pd.DataFrame([data])
     prediction = model.predict(df)[0] 
     return {"churn_prediction" : prediction}
 
 @app.get("/test")
 def test_model_old():
-    return test_model_json()
+    logger.info("Testing model...")
+    
+    result = test_model_json()
+    return result

@@ -2,5 +2,6 @@
 """
 Utility functions for the customer churn prediction project
 Contains:
-    1. Model Builder
+    1. Model Loader
+    2. Preprocessing
 """
