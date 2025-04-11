@@ -14,7 +14,7 @@ def get_trained_encoder_and_columns(df: pd.DataFrame):
     return encoder, cat_cols, encoded_columns
 
 # Inference-time preprocessor
-def preprocessAPIData(data_dict, encoder, cat_cols, model_columns):
+def preprocess_API_data(data_dict, encoder, cat_cols, model_columns):
     df = pd.DataFrame([data_dict])
     encoded = encoder.transform(df[cat_cols])
     encoded_df = pd.DataFrame(encoded, columns=encoder.get_feature_names_out(cat_cols))
@@ -26,6 +26,48 @@ def preprocessAPIData(data_dict, encoder, cat_cols, model_columns):
     df_final = df_final.reindex(columns=model_columns, fill_value=0)
     return df_final
 
+def rename_keys_for_model(d):
+    key_map = {
+        "gender": "gender",
+        "seniorCitizen": "SeniorCitizen",
+        "partner": "Partner",
+        "dependents": "Dependents",
+        "tenure": "tenure",
+        "phoneService": "PhoneService",
+        "multipleLines": "MultipleLines",
+        "internetService": "InternetService",
+        "onlineSecurity": "OnlineSecurity",
+        "onlineBackup": "OnlineBackup",
+        "deviceProtection": "DeviceProtection",
+        "techSupport": "TechSupport",
+        "streamingTV": "StreamingTV",
+        "streamingMovies": "StreamingMovies",
+        "contract": "Contract",
+        "paperlessBilling": "PaperlessBilling",
+        "paymentMethod": "PaymentMethod",
+        "monthlyCharges": "MonthlyCharges",
+        "totalCharges": "TotalCharges"
+    }
+    return {key_map.get(k, k): v for k, v in d.items()}
+
+def get_model_columns()-> list:
+    MODEL_COLUMNS = [ 
+    'SeniorCitizen', 'tenure', 'MonthlyCharges', 'TotalCharges',
+    'gender_Male', 'Partner_Yes', 'Dependents_Yes', 'PhoneService_Yes',
+    'MultipleLines_No', 'MultipleLines_No phone service', 'MultipleLines_Yes',
+    'InternetService_DSL', 'InternetService_Fiber optic', 'InternetService_No',
+    'OnlineSecurity_No', 'OnlineSecurity_No internet service', 'OnlineSecurity_Yes',
+    'OnlineBackup_No', 'OnlineBackup_No internet service', 'OnlineBackup_Yes',
+    'DeviceProtection_No', 'DeviceProtection_No internet service', 'DeviceProtection_Yes',
+    'TechSupport_No', 'TechSupport_No internet service', 'TechSupport_Yes',
+    'StreamingTV_No', 'StreamingTV_No internet service', 'StreamingTV_Yes',
+    'StreamingMovies_No', 'StreamingMovies_No internet service', 'StreamingMovies_Yes',
+    'Contract_Month-to-month', 'Contract_One year', 'Contract_Two year',
+    'PaperlessBilling_Yes',
+    'PaymentMethod_Bank transfer (automatic)', 'PaymentMethod_Credit card (automatic)',
+    'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check'
+    ]
+    return MODEL_COLUMNS
 
 
 if __name__ == "__main__":
@@ -51,23 +93,7 @@ if __name__ == "__main__":
         "StreamingMovies": "No"
     }
 
-    model_columns = [
-        'SeniorCitizen', 'tenure', 'MonthlyCharges', 'TotalCharges',
-        'gender_Male', 'Partner_Yes', 'Dependents_Yes', 'PhoneService_Yes',
-        'MultipleLines_No', 'MultipleLines_No phone service', 'MultipleLines_Yes',
-        'InternetService_DSL', 'InternetService_Fiber optic', 'InternetService_No',
-        'OnlineSecurity_No', 'OnlineSecurity_No internet service', 'OnlineSecurity_Yes',
-        'OnlineBackup_No', 'OnlineBackup_No internet service', 'OnlineBackup_Yes',
-        'DeviceProtection_No', 'DeviceProtection_No internet service', 'DeviceProtection_Yes',
-        'TechSupport_No', 'TechSupport_No internet service', 'TechSupport_Yes',
-        'StreamingTV_No', 'StreamingTV_No internet service', 'StreamingTV_Yes',
-        'StreamingMovies_No', 'StreamingMovies_No internet service', 'StreamingMovies_Yes',
-        'Contract_Month-to-month', 'Contract_One year', 'Contract_Two year',
-        'PaperlessBilling_Yes',
-        'PaymentMethod_Bank transfer (automatic)', 'PaymentMethod_Credit card (automatic)',
-        'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check'
-    ]
-
+    model_columns = get_model_columns()
     encoder, cat_cols, encoded_columns = get_trained_encoder_and_columns(pd.DataFrame([data]))
-    data = preprocessAPIData(data, encoder, cat_cols, model_columns)
+    data = preprocess_API_data(data, encoder, cat_cols, model_columns)
     print(data.T)

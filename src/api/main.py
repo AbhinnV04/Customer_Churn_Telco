@@ -1,5 +1,4 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import pandas as pd
@@ -8,7 +7,8 @@ import logging
 
 # Internal utils
 from utils.model_loader import load_model, test_model_json
-from utils.preprocessing import preprocessAPIData, get_trained_encoder_and_columns, 
+from utils.preprocessing import preprocess_API_data, get_trained_encoder_and_columns, rename_keys_for_model, get_model_columns
+from schemas.customer import CustomerData
 
 # Load environment
 load_dotenv()
@@ -34,77 +34,10 @@ app.add_middleware(
 )
 
 # Expected model input columns
-MODEL_COLUMNS = [ 
-    'SeniorCitizen', 'tenure', 'MonthlyCharges', 'TotalCharges',
-    'gender_Male', 'Partner_Yes', 'Dependents_Yes', 'PhoneService_Yes',
-    'MultipleLines_No', 'MultipleLines_No phone service', 'MultipleLines_Yes',
-    'InternetService_DSL', 'InternetService_Fiber optic', 'InternetService_No',
-    'OnlineSecurity_No', 'OnlineSecurity_No internet service', 'OnlineSecurity_Yes',
-    'OnlineBackup_No', 'OnlineBackup_No internet service', 'OnlineBackup_Yes',
-    'DeviceProtection_No', 'DeviceProtection_No internet service', 'DeviceProtection_Yes',
-    'TechSupport_No', 'TechSupport_No internet service', 'TechSupport_Yes',
-    'StreamingTV_No', 'StreamingTV_No internet service', 'StreamingTV_Yes',
-    'StreamingMovies_No', 'StreamingMovies_No internet service', 'StreamingMovies_Yes',
-    'Contract_Month-to-month', 'Contract_One year', 'Contract_Two year',
-    'PaperlessBilling_Yes',
-    'PaymentMethod_Bank transfer (automatic)', 'PaymentMethod_Credit card (automatic)',
-    'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check'
-]
+MODEL_COLUMNS = get_model_columns()
 
 # Load model
 model = load_model()
-
-# Input Schema
-class CustomerData(BaseModel):
-    gender: str
-    seniorCitizen: int
-    partner: int
-    dependents: int
-    tenure: float
-    phoneService: int
-    multipleLines: str
-    internetService: str
-    onlineSecurity: str
-    onlineBackup: str
-    deviceProtection: str
-    techSupport: str
-    streamingTV: str
-    streamingMovies: str
-    contract: str
-    paperlessBilling: int
-    paymentMethod: str
-    monthlyCharges: float
-    totalCharges: float
-
-    class Config:
-        allow_population_by_field_name = True
-
-
-# Utility: Rename keys to match training time casing
-def rename_keys_for_model(d):
-    key_map = {
-        "gender": "gender",
-        "seniorCitizen": "SeniorCitizen",
-        "partner": "Partner",
-        "dependents": "Dependents",
-        "tenure": "tenure",
-        "phoneService": "PhoneService",
-        "multipleLines": "MultipleLines",
-        "internetService": "InternetService",
-        "onlineSecurity": "OnlineSecurity",
-        "onlineBackup": "OnlineBackup",
-        "deviceProtection": "DeviceProtection",
-        "techSupport": "TechSupport",
-        "streamingTV": "StreamingTV",
-        "streamingMovies": "StreamingMovies",
-        "contract": "Contract",
-        "paperlessBilling": "PaperlessBilling",
-        "paymentMethod": "PaymentMethod",
-        "monthlyCharges": "MonthlyCharges",
-        "totalCharges": "TotalCharges"
-    }
-    return {key_map.get(k, k): v for k, v in d.items()}
-
 
 # Root Endpoint
 @app.get("/")
@@ -123,7 +56,7 @@ async def predict_churn_new(data: CustomerData):
         input_df = pd.DataFrame([renamed])
         encoder, cat_cols, _ = get_trained_encoder_and_columns(input_df)
 
-        data_preprocessed = preprocessAPIData(renamed, encoder, cat_cols, MODEL_COLUMNS)
+        data_preprocessed = preprocess_API_data(renamed, encoder, cat_cols, MODEL_COLUMNS)
 
         if data_preprocessed.shape[1] != len(MODEL_COLUMNS):
             raise ValueError(f"Input has {data_preprocessed.shape[1]} features, but model expects {len(MODEL_COLUMNS)}.")
