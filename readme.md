@@ -1,7 +1,7 @@
 # Customer Churn Prediction Project
 
 <p align="center">
-  <img src="https://trianglerice.wordpress.com/wp-content/uploads/2015/01/tumblr_nhk406ny5e1ti2my5o1_5001.gif" alt="Centered GIF" />
+  <img src="https://abhinnv04.github.io/portfolio/assets/project_imgs/churn.gif" alt="Centered GIF" />
 </p>
 
 
